@@ -2,7 +2,7 @@
 
 Medicano is a comprehensive AI-powered digital healthcare platform built with Python and Streamlit. It provides real-time health monitoring and personalized tools to assist users in managing critical health conditions such as PCOS, Diabetes, and cardiovascular indicators through RPPG. Medicano is designed to be intelligent, intuitive, and accessible.
 
-Owner: Aman Hasan
+Owner: [Aman Hasan](https://github.com/amanhasankm)
 License: MIT
 Technology Stack: Python, Streamlit, MongoDB, Twilio, OpenCV, Machine Learning
 
@@ -41,7 +41,7 @@ Technology Stack: Python, Streamlit, MongoDB, Twilio, OpenCV, Machine Learning
 
 👤 Author
 Aman Hasan
-📧 amanhasankm@gmail.com
+📧 amanhasan254@gmail.com
 🌐 LinkedIn
 🐙 GitHub
 

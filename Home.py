@@ -101,6 +101,24 @@ class Homes:
         if st.session_state.selected_feature == "PCOS":
             st.subheader("💊 PCOS Tools")
 
+            # PCOS Info Card
+            st.markdown("""
+            <div style="background-color: #f9f9f9; padding: 20px; border-left: 6px solid #006699; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 25px;">
+                <h3 style="color:#003366;">What is PCOS?</h3>
+                <p style="font-size: 16px; color: #333;">
+                    Polycystic Ovary Syndrome (PCOS) is a common hormonal disorder that affects women of reproductive age.
+                    It can cause irregular periods, excess androgen levels (male hormones), and polycystic ovaries.
+                </p>
+                <ul style="font-size: 16px; color: #333;">
+                    <li><strong>Common symptoms:</strong> Acne, weight gain, hair thinning, irregular menstruation.</li>
+                    <li><strong>Long-term risks:</strong> Infertility, diabetes, endometrial cancer, and cardiovascular issues.</li>
+                    <li><strong>Management:</strong> Through proper diet, exercise, medications, and medical support.</li>
+                </ul>
+                <p style="color: #555; font-style: italic;">Use the tools below to assess and manage PCOS effectively.</p>
+            </div>
+            """, unsafe_allow_html=True)
+
+            # Sub-feature buttons
             col1, col2 = st.columns([1, 1])
             with col1:
                 if st.button("🧬 PCOS Predictor", key="pcos_predictor_btn"):

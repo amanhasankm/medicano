@@ -39,6 +39,10 @@ Technology Stack: Python, Streamlit, MongoDB, Twilio, OpenCV, Machine Learning
 • Twilio API – SMS/email alerts for medication reminders
 • MongoDB Atlas – Secure data storage and retrieval
 
+SCREENSHOT:
+
+<img width="1425" height="806" alt="Screenshot 2025-07-15 at 11 16 53 AM" src="https://github.com/user-attachments/assets/b29e0eb7-5e12-485e-bdee-00bc676e1b01" />
+
 👤 Author
 Aman Hasan
 📧 amanhasan254@gmail.com

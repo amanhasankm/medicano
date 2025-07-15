@@ -3,20 +3,20 @@ import time
 
 # Import sub-feature apps
 from PCOS.pcospredicter.pcos_predicter import app as PCOSApp
-from RPPG.app import app as RPPGApp
 from PCOS.Diet_Plan_Generator.dietplanner import app as DP
+from PCOS.PCOS_Type_Classifier.classifier import app as PCOSTypeClassifier
+from RPPG.app import app as RPPGApp
 from DiabetesChecker import app as DiabetesCheckerApp
 
 class Homes:
     @staticmethod
     def app():
-        # Session states
         if "selected_feature" not in st.session_state:
             st.session_state.selected_feature = None
         if "pcos_subfeature" not in st.session_state:
             st.session_state.pcos_subfeature = None
 
-        # Back to Home Button (Floating Top-Left)
+        # Back to Home Button
         if st.session_state.selected_feature:
             st.markdown("""
                 <style>
@@ -118,18 +118,24 @@ class Homes:
             </div>
             """, unsafe_allow_html=True)
 
-            # Sub-feature buttons
-            col1, col2 = st.columns([1, 1])
+            # PCOS Sub-feature Buttons in 2 columns
+            col1, col2 = st.columns(2)
             with col1:
                 if st.button("🧬 PCOS Predictor", key="pcos_predictor_btn"):
                     st.session_state.pcos_subfeature = "predictor"
                     st.rerun()
+
+                st.markdown("<br>", unsafe_allow_html=True)  # spacing
+                if st.button("🔍 PCOS Type Classifier", key="pcos_type_btn"):
+                    st.session_state.pcos_subfeature = "type_classifier"
+                    st.rerun()
+
             with col2:
                 if st.button("🥗 Diet Plan Generator", key="diet_plan_btn"):
                     st.session_state.pcos_subfeature = "diet"
                     st.rerun()
 
-            # Sub-feature loaders
+            # Sub-feature Logic
             if st.session_state.pcos_subfeature == "predictor":
                 with st.spinner("🔄 Loading PCOS Predictor..."):
                     time.sleep(1)
@@ -138,6 +144,10 @@ class Homes:
                 with st.spinner("🔄 Loading Diet Plan Generator..."):
                     time.sleep(1)
                     DP()
+            elif st.session_state.pcos_subfeature == "type_classifier":
+                with st.spinner("🔄 Loading PCOS Type Classifier..."):
+                    time.sleep(1)
+                    PCOSTypeClassifier()
 
         elif st.session_state.selected_feature == "RPPG":
             with st.spinner("🔄 Loading RPPG..."):
@@ -150,7 +160,6 @@ class Homes:
                 DiabetesCheckerApp()
 
         else:
-            # Main Home Screen Buttons (Large Size)
             col1, col2 = st.columns(2)
 
             with col1:

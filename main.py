@@ -4,6 +4,7 @@ from streamlit_extras.let_it_rain import rain
 import os
 import time
 
+
 # Set page config
 st.set_page_config(page_title="Medicano", page_icon="💊", layout="wide", initial_sidebar_state="expanded")
 
@@ -13,6 +14,7 @@ from PillRemainder import app as PillRemainderApp
 from DiabetesChecker.app import app as DiabetesCheckerApp
 from auth import register_user, login_user
 from MedicalDocumentVault.app import app as MedicalDocumentVaultApp
+from ReportSummary.app import ReportSummary
 
 # Session state initialization
 if "logged_in" not in st.session_state:
@@ -120,10 +122,8 @@ if st.session_state.logged_in:
 
         def run(self):
             titles = [app['title'] for app in self.apps]
-
             with st.sidebar:
                 st.markdown(f"👋 Logged in as **{st.session_state.username}**")
-
                 if st.button("🚪 Logout"):
                     st.session_state.logged_in = False
                     st.session_state.username = ""
@@ -148,7 +148,7 @@ if st.session_state.logged_in:
             if selected_app:
                 selected_app['function']()
 
-    # Register all app pages
+    # ✅ Register all app pages INSIDE the logged-in block
     Medical = MultiApp()
     Medical.add_apps("Home", Home.Homes.app)
     Medical.add_apps("Diagnose Disease", lambda: DiagnoseDisease.Diagnose().app())
@@ -161,5 +161,7 @@ if st.session_state.logged_in:
     Medical.add_apps("Pill Reminder", PillRemainderApp)
     Medical.add_apps("About&Contact", lambda: About_Contact.app())
     Medical.add_apps("Health Records", MedicalDocumentVaultApp)
+    Medical.add_apps("Medical Report Summary", lambda: ReportSummary().app())
 
     Medical.run()
+

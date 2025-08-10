@@ -45,6 +45,10 @@ class Alternatives:
             border-radius: 15px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             margin-top: 2rem;
+            color: black; /* Always visible */
+            font-size: 1rem;
+            line-height: 1.5;
+            white-space: pre-wrap; /* Preserve formatting */
         }
         </style>
         """, unsafe_allow_html=True)
@@ -93,16 +97,21 @@ class Alternatives:
                     stream=True,
                 )
 
-                response_content = ""
-                for chunk in response:
-                    if chunk.choices[0].delta.content:
-                        response_content += chunk.choices[0].delta.content
-
                 st.markdown("## 🧾 Suggested Alternatives")
                 rain(emoji="💊", font_size=26, falling_speed=4, animation_length="short")
 
-                st.markdown(f"""
-                <div class="response-box">
-                    {response_content}
-                </div>
-                """, unsafe_allow_html=True)
+                # Progressive streaming output (only one block)
+                response_container = st.empty()
+                response_content = ""
+
+                for chunk in response:
+                    if chunk.choices[0].delta.content:
+                        response_content += chunk.choices[0].delta.content
+                        response_container.markdown(
+                            f"<div class='response-box'>{response_content}</div>",
+                            unsafe_allow_html=True
+                        )
+
+# Run the app
+if __name__ == "__main__":
+    Alternatives().app()

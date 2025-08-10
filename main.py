@@ -3,12 +3,17 @@ from streamlit_option_menu import option_menu
 from streamlit_extras.let_it_rain import rain
 import os
 import time
+import requests
 
+# ===================== PAGE CONFIG =====================
+st.set_page_config(
+    page_title="Medicano",
+    page_icon="assets/Medicano_Icon.png",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# Set page config
-st.set_page_config(page_title="Medicano", page_icon="💊", layout="wide", initial_sidebar_state="expanded")
-
-# Import internal modules
+# ===================== IMPORT APP MODULES =====================
 import Blogs, Home, Alternatives, DiagnoseDisease, MedicineInformation, NearbyPharmacies, Ambulance, About_Contact
 from PillRemainder import app as PillRemainderApp
 from DiabetesChecker.app import app as DiabetesCheckerApp
@@ -16,7 +21,7 @@ from auth import register_user, login_user
 from MedicalDocumentVault.app import app as MedicalDocumentVaultApp
 from ReportSummary.app import ReportSummary
 
-# Session state initialization
+# ===================== SESSION STATE INIT =====================
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 if "username" not in st.session_state:
@@ -25,20 +30,27 @@ if "popup_shown" not in st.session_state:
     st.session_state.popup_shown = False
 if "popup_message" not in st.session_state:
     st.session_state.popup_message = ""
+if "chat_open" not in st.session_state:
+    st.session_state.chat_open = False
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
-# ---------------- Header ----------------
-st.markdown("<h1 style='text-align: center;'>💊 Welcome to <span style='color:#4a4aff;'>Medicano</span></h1>", unsafe_allow_html=True)
+# ===================== HEADER =====================
+st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
+st.image("assets/Medicano_Icon.png", width=50)
+st.markdown("<h1>Welcome to <span style='color:#4a4aff;'>Medicano</span></h1>", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
 
-# ---------------- Login / Register ----------------
+
+# ===================== LOGIN / REGISTER =====================
 if not st.session_state.logged_in:
     tab1, tab2 = st.tabs(["🔐 Login", "📝 Register"])
 
-    # --- Login Tab ---
     with tab1:
         st.markdown("### 👤 Login to your account")
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            with st.form("login_form", clear_on_submit=False):
+            with st.form("login_form"):
                 username = st.text_input("👨‍⚕️ Username", placeholder="Enter your username")
                 password = st.text_input("🔑 Password", type="password", placeholder="Enter your password")
                 submit_login = st.form_submit_button("🚪 Login")
@@ -48,26 +60,21 @@ if not st.session_state.logged_in:
                 if success:
                     st.session_state.logged_in = True
                     st.session_state.username = user["username"]
-
-                    # ✅ Create user folder if not exists
-                    user_folder = os.path.join("uploaded_docs", st.session_state.username)
-                    os.makedirs(user_folder, exist_ok=True)
-
+                    os.makedirs(os.path.join("uploaded_docs", st.session_state.username), exist_ok=True)
                     st.success("🎉 Login successful!")
                     rain(emoji="💊", font_size=30, falling_speed=5, animation_length="medium")
                     st.rerun()
                 else:
                     st.error("❌ Invalid credentials.")
 
-    # --- Register Tab ---
     with tab2:
         st.markdown("### 🆕 Create a new account")
         col1, col2, col3 = st.columns([1, 2, 1])
         with col2:
-            new_username = st.text_input("👤 Username", key="reg_username", placeholder="Choose a username")
-            new_email = st.text_input("📧 Email", key="reg_email", placeholder="Enter your email")
-            new_password = st.text_input("🔐 Password", type="password", key="reg_password", placeholder="Create a password")
-            confirm_password = st.text_input("🔐 Confirm Password", type="password", key="reg_confirm", placeholder="Re-enter password")
+            new_username = st.text_input("👤 Username", key="reg_username")
+            new_email = st.text_input("📧 Email", key="reg_email")
+            new_password = st.text_input("🔐 Password", type="password", key="reg_password")
+            confirm_password = st.text_input("🔐 Confirm Password", type="password", key="reg_confirm")
 
             if st.button("✅ Register"):
                 if new_password != confirm_password:
@@ -83,7 +90,7 @@ if not st.session_state.logged_in:
                     else:
                         st.error("❌ " + msg)
 
-# ---------------- Registration Success Popup ----------------
+# ===================== REGISTRATION SUCCESS POPUP =====================
 if st.session_state.popup_shown:
     st.markdown(f"""
         <style>
@@ -105,12 +112,11 @@ if st.session_state.popup_shown:
             <p>Please login from the Login tab.</p>
         </div>
     """, unsafe_allow_html=True)
-
     time.sleep(3)
     st.session_state.popup_shown = False
     st.experimental_rerun()
 
-# ---------------- Load App If Logged In ----------------
+# ===================== MAIN APP =====================
 if st.session_state.logged_in:
 
     class MultiApp:
@@ -135,20 +141,14 @@ if st.session_state.logged_in:
                     icons=['house-fill', 'heart-pulse', 'capsule', 'info-circle', 'journal-text',
                            'geo-alt', 'exclamation-triangle-fill', 'bell', 'activity', 'info-square-fill', 'file-earmark-text'],
                     menu_icon='chat-text-fill',
-                    default_index=0,
-                    styles={
-                        "container": {"padding": "5!important", "background-color": 'white'},
-                        "icon": {"color": "black", "font-size": "23px"},
-                        "nav-link": {"color": "black", "font-size": "20px", "text-align": "left"},
-                        "nav-link-selected": {"background-color": "#f0f0f0"}
-                    }
+                    default_index=0
                 )
 
             selected_app = next((app for app in self.apps if app['title'] == app_title), None)
             if selected_app:
                 selected_app['function']()
 
-    # ✅ Register all app pages INSIDE the logged-in block
+    # Register apps
     Medical = MultiApp()
     Medical.add_apps("Home", Home.Homes.app)
     Medical.add_apps("Diagnose Disease", lambda: DiagnoseDisease.Diagnose().app())
@@ -165,3 +165,4 @@ if st.session_state.logged_in:
 
     Medical.run()
 
+    # ===================== FLOATING CHATBOT ICON ===============

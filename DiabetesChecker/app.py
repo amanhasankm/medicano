@@ -1,9 +1,18 @@
-# DiabetesChecker/app.py
 import streamlit as st
+import joblib
+import numpy as np
+import os
+
+# Load model once at startup
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "diabetes_pipeline.joblib")
+if not os.path.exists(MODEL_PATH):
+    st.error("Model file not found. Please run train_diabetes.py first.")
+    st.stop()
+
+model = joblib.load(MODEL_PATH)
 
 def app():
-    st.title("🩸 Diabetes Risk Checker")
-
+    st.title("🩸 Diabetes Risk Checker (ML Powered)")
     st.markdown("### Enter your health metrics:")
 
     pregnancies = st.number_input("Pregnancies", 0, 20, 1)
@@ -16,7 +25,15 @@ def app():
     age = st.number_input("Age", 1, 100, 30)
 
     if st.button("🔍 Predict"):
-        if glucose > 130 or bmi > 30 or age > 45:
-            st.error("⚠️ You may be at risk of diabetes. Please consult your doctor.")
+        # Prepare input in the right shape
+        features = np.array([[pregnancies, glucose, blood_pressure, skin_thickness,
+                              insulin, bmi, diabetes_pedigree, age]])
+        
+        prediction = model.predict(features)[0]
+        probability = model.predict_proba(features)[0][1]  # Probability of diabetes
+
+        if prediction == 1:
+            st.error(f"⚠️ You may be at risk of diabetes. Probability: {probability:.2%}")
         else:
-            st.success("✅ You are likely not diabetic. Stay healthy!")
+            st.success(f"✅ You are likely not diabetic. Probability: {probability:.2%}")
+

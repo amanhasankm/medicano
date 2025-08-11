@@ -75,20 +75,23 @@ if not st.session_state.logged_in:
             new_email = st.text_input("📧 Email", key="reg_email")
             new_password = st.text_input("🔐 Password", type="password", key="reg_password")
             confirm_password = st.text_input("🔐 Confirm Password", type="password", key="reg_confirm")
+if st.button("✅ Register"):
+    if new_password != confirm_password:
+        st.warning("⚠️ Passwords do not match.")
+    elif len(new_password) < 6:
+        st.warning("⚠️ Password should be at least 6 characters.")
+    else:
+        success, msg = register_user(new_username, new_email, new_password)
+        if success:
+            st.session_state.popup_message = "✅ Registration successful!"
+            st.session_state.popup_shown = True
+            st.session_state.username = new_username
 
-            if st.button("✅ Register"):
-                if new_password != confirm_password:
-                    st.warning("⚠️ Passwords do not match.")
-                elif len(new_password) < 6:
-                    st.warning("⚠️ Password should be at least 6 characters.")
-                else:
-                    success, msg = register_user(new_username, new_email, new_password)
-                    if success:
-                        st.session_state.popup_message = "✅ Registration successful!"
-                        st.session_state.popup_shown = True
-                        st.session_state.username = new_username
-                    else:
-                        st.error("❌ " + msg)
+            # Redirect to login page
+            st.switch_page("pages/login_user")  # Change path as per your app
+        else:
+            st.error("❌ " + msg)
+
 
 # ===================== REGISTRATION SUCCESS POPUP =====================
 if st.session_state.popup_shown:

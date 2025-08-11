@@ -11,3 +11,9 @@ scikit-learn
 opencv-python==4.11.0.86 
 opencv-python-headless==4.11.0.86
 pdfkit==1.0.0
+pandas
+numpy
+joblib
+streamlit
+xgboost   
+matplotlib
